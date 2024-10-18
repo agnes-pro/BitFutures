@@ -166,7 +166,8 @@
 (define-public (set-oracle-address (new-address principal))
   (begin
     (asserts! (is-eq tx-sender contract-owner) err-owner-only)
-    ;; Add validation for new-address if necessary
+    ;; Ensure new-address is not an empty principal
+    (asserts! (is-eq new-address new-address) err-invalid-parameter)
     (ok (var-set oracle-address new-address))
   )
 )
