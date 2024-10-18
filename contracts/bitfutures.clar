@@ -146,3 +146,17 @@
     )
   )
 )
+
+;; Getter functions
+
+(define-read-only (get-market (market-id uint))
+  (map-get? markets market-id)
+)
+
+(define-read-only (get-user-prediction (market-id uint) (user principal))
+  (map-get? user-predictions {market-id: market-id, user: user})
+)
+
+(define-read-only (get-contract-balance)
+  (stx-get-balance (as-contract tx-sender))
+)
