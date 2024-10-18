@@ -160,3 +160,36 @@
 (define-read-only (get-contract-balance)
   (stx-get-balance (as-contract tx-sender))
 )
+
+;; Admin functions
+
+(define-public (set-oracle-address (new-address principal))
+  (begin
+    (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+    (ok (var-set oracle-address new-address))
+  )
+)
+
+(define-public (set-minimum-stake (new-minimum uint))
+  (begin
+    (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+    (ok (var-set minimum-stake new-minimum))
+  )
+)
+
+(define-public (set-fee-percentage (new-fee uint))
+  (begin
+    (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+    (asserts! (<= new-fee u100) err-invalid-parameter)
+    (ok (var-set fee-percentage new-fee))
+  )
+)
+
+(define-public (withdraw-fees (amount uint))
+  (begin
+    (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+    (asserts! (<= amount (stx-get-balance (as-contract tx-sender))) err-insufficient-balance)
+    (try! (as-contract (stx-transfer? amount (as-contract tx-sender) contract-owner)))
+    (ok amount)
+  )
+)
