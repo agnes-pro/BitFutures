@@ -89,3 +89,25 @@
     (ok true)
   )
 )
+
+(define-public (resolve-market (market-id uint) (end-price uint))
+  (let
+    (
+      (market (unwrap! (map-get? markets market-id) err-not-found))
+    )
+    (asserts! (is-eq tx-sender (var-get oracle-address)) err-owner-only)
+    (asserts! (>= block-height (get end-block market)) err-market-closed)
+    (asserts! (not (get resolved market)) err-market-closed)
+    (asserts! (> end-price u0) err-invalid-parameter)
+    
+    (map-set markets market-id
+      (merge market
+        {
+          end-price: end-price,
+          resolved: true
+        }
+      )
+    )
+    (ok true)
+  )
+)
