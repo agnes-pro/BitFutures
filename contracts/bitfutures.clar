@@ -61,7 +61,7 @@
   (let
     (
       (market (unwrap! (map-get? markets market-id) err-not-found))
-      (current-block (unwrap-panic (get-block-info? id-header (- block-height u1))))
+      (current-block block-height)
     )
     (asserts! (and (>= current-block (get start-block market)) (< current-block (get end-block market))) err-market-closed)
     (asserts! (or (is-eq prediction "up") (is-eq prediction "down")) err-invalid-prediction)
@@ -166,6 +166,7 @@
 (define-public (set-oracle-address (new-address principal))
   (begin
     (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+    ;; Add validation for new-address if necessary
     (ok (var-set oracle-address new-address))
   )
 )
@@ -173,6 +174,8 @@
 (define-public (set-minimum-stake (new-minimum uint))
   (begin
     (asserts! (is-eq tx-sender contract-owner) err-owner-only)
+    ;; Ensure new-minimum is greater than zero
+    (asserts! (> new-minimum u0) err-invalid-parameter)
     (ok (var-set minimum-stake new-minimum))
   )
 )
