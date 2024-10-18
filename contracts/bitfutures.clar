@@ -13,3 +13,22 @@
 (define-data-var minimum-stake uint u1000000) ;; 1 STX
 (define-data-var fee-percentage uint u2) ;; 2%
 (define-data-var market-counter uint u0)
+
+;; Maps
+(define-map markets
+  uint
+  {
+    start-price: uint,
+    end-price: uint,
+    total-up-stake: uint,
+    total-down-stake: uint,
+    start-block: uint,
+    end-block: uint,
+    resolved: bool
+  }
+)
+
+(define-map user-predictions
+  {market-id: uint, user: principal}
+  {prediction: (string-ascii 4), stake: uint, claimed: bool}
+)
