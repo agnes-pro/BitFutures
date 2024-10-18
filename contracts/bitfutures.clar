@@ -111,3 +111,38 @@
     (ok true)
   )
 )
+
+(define-public (claim-winnings (market-id uint))
+  (let
+    (
+      (market (unwrap! (map-get? markets market-id) err-not-found))
+      (prediction (unwrap! (map-get? user-predictions {market-id: market-id, user: tx-sender}) err-not-found))
+    )
+    (asserts! (get resolved market) err-market-closed)
+    (asserts! (not (get claimed prediction)) err-already-claimed)
+    
+    (let
+      (
+        (winning-prediction (if (> (get end-price market) (get start-price market)) "up" "down"))
+        (total-stake (+ (get total-up-stake market) (get total-down-stake market)))
+        (winning-stake (if (is-eq winning-prediction "up") (get total-up-stake market) (get total-down-stake market)))
+      )
+      (asserts! (is-eq (get prediction prediction) winning-prediction) err-invalid-prediction)
+      
+      (let
+        (
+          (winnings (/ (* (get stake prediction) total-stake) winning-stake))
+          (fee (/ (* winnings (var-get fee-percentage)) u100))
+          (payout (- winnings fee))
+        )
+        (try! (as-contract (stx-transfer? payout (as-contract tx-sender) tx-sender)))
+        (try! (as-contract (stx-transfer? fee (as-contract tx-sender) contract-owner)))
+        
+        (map-set user-predictions {market-id: market-id, user: tx-sender}
+          (merge prediction {claimed: true})
+        )
+        (ok payout)
+      )
+    )
+  )
+)
