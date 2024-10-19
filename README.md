@@ -16,6 +16,7 @@ BitFutures is a decentralized prediction market smart contract built on the Stac
 ### Core Functions
 
 #### For Users
+
 - `make-prediction`: Place a prediction with a stake on a market
 - `claim-winnings`: Claim rewards for correct predictions
 - `get-market`: View details of a specific market
@@ -23,6 +24,7 @@ BitFutures is a decentralized prediction market smart contract built on the Stac
 - `get-contract-balance`: View the current contract balance
 
 #### For Administrators
+
 - `create-market`: Create a new prediction market
 - `resolve-market`: Resolve a market with final price data
 - `set-oracle-address`: Update the oracle address
@@ -40,6 +42,7 @@ BitFutures is a decentralized prediction market smart contract built on the Stac
 ## Technical Details
 
 ### Constants
+
 - Minimum stake: 1 STX (1,000,000 microSTX)
 - Default fee: 2%
 - Error codes: 100-106 for various error conditions
@@ -109,4 +112,3 @@ To modify or extend the contract:
 2. Make changes to the Clarity smart contract
 3. Test thoroughly using Clarinet
 4. Deploy updated contract
-
